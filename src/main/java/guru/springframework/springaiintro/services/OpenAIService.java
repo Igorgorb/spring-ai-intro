@@ -1,5 +1,9 @@
-package guru.springframework.springaiintro.services;/**
- * @Author _se.ho
+package guru.springframework.springaiintro.services;
+
+/**
+ * @Author igorg
  * @create 04.05.2024
- */public interface OpenAIService {
+ */
+public interface OpenAIService {
+	String getAnswer(String question);
 }
