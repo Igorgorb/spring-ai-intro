@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.springaiintro.model.Answer;
 import guru.springframework.springaiintro.model.GetCapitalRequest;
 import guru.springframework.springaiintro.model.GetCapitalResponse;
+import guru.springframework.springaiintro.model.GetCityWithInfoResponse;
 import guru.springframework.springaiintro.model.Question;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.chat.ChatResponse;
@@ -36,6 +37,9 @@ public class OpenAIServiceImpl implements OpenAIService {
 	@Value("classpath:templates/get-capital-with-info.st")
 	private Resource getGetCapitalWithInfoPrompt;
 
+	@Value("classpath:templates/get-city-prompt-info.st")
+	private Resource getGetCityWithInfoPrompt;
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -46,6 +50,23 @@ public class OpenAIServiceImpl implements OpenAIService {
 		ChatResponse response = chatClient.call(prompt);
 
 		return new Answer(response.getResult().getOutput().getContent());
+	}
+
+	@Override
+	public GetCityWithInfoResponse getCityWithInfo(final GetCapitalRequest getCapitalRequest) {
+		BeanOutputParser<GetCityWithInfoResponse> parser = new BeanOutputParser<>(GetCityWithInfoResponse.class);
+		final String format = parser.getFormat();
+		System.out.println(format);
+
+		PromptTemplate promptTemplate = new PromptTemplate(getGetCityWithInfoPrompt);
+		Prompt prompt = promptTemplate.create(Map.of("stateOrCountry", getCapitalRequest.stateOrCountry(),
+			"format", format
+		));
+		ChatResponse response = chatClient.call(prompt);
+
+		System.out.println(response.getResult().getOutput().getContent());
+
+		return parser.parse(response.getResult().getOutput().getContent());
 	}
 
 	@Override

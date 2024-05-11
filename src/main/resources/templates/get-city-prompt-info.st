@@ -1,0 +1,1 @@
+What is the information of {stateOrCountry}? {format}
